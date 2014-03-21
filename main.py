@@ -15,23 +15,9 @@ def dotproduct(x,y):
     return p
         
 def cosine_dist(x,y):
-    return 1 - float(dotproduct(x,y))/((dotproduct(x,x) + dotproduct(y,y))**.5)
-#    if len(x.data) == 0 or len(y.data) == 0:
-#        return 1
-#
-#    a = x.dot(y.transpose()).data
-#    
-#    if len(a) == 0:
-#        return 1
-#    
-#    b = x.dot(x.transpose()).data
-#   c = y.dot(y.transpose()).data
-    
-#    return 1 - (float(a[0])) / ((b[0] + c[0]) ** .5)
-    #try:
-    #    return 1 - float(x.dot(y.transpose()).data[0])/((x.dot(x.transpose()).data[0] + y.dot(y.transpose()).data[0])**.5)
-    #except:
-        #return 1
+    return 1 - float(dotproduct(x,y))/((dotproduct(x,x) + dotproduct(y,y))**.5
+
+
 #indir ='logs/'
 #newdir = 'logs/processed/'
 #processed_file = 'processedTweets.txt'
@@ -49,17 +35,22 @@ def run():
     tweet_ids = []
     tweet_text = []
     counter = 0
-    num_hashtables = 1 ## recompute the random vectors if this is changed
-    dimension = 500000  ## recompute the random vectors if this is changed
-    hash_size = 13
-    bucket_size = 100
-    comparisons = 200
-    cos_threshold = .5
+    num_hashtables = 1      ## recompute the random vectors if this is changed
+    dimension = 500000      ## recompute the random vectors if this is changed
+    hash_size = 13          ## length of the LSHash of the tweets
+    bucket_size = 100       ## size of the queue for each hash in the hash tables
+    comparisons = 200       ## upper bound on the number of comparisons (dot product) to find the nearest neighbor
+    cos_threshold = .5      ## threshold for the similarity of two tweets
+
+    ## initialize the tf-idf vectorizer
     vectorizer = onlineTfidfVectorizer(min_df = 1, smooth_idf=True, stop_words='english', min_dict_size = dimension)
+    ## initialize the hash tables, specify the hash size, number of hash tabeles and the queue size
     lsh = LSHash(hash_size = hash_size, input_dim = dimension, num_hashtables=num_hashtables, max_queue_size= bucket_size)
-    clusters = {}
+
+
+    clusters = {}           ## maintain the clusters
     num_clusters = 0
-    inv_index = {}
+    inv_index = {}          ## inverse mapping from tweet_id to clusters
     Y = None
     Y1 = None
     f_d = open("output.txt",'w')
@@ -68,6 +59,8 @@ def run():
         for f in filenames:
             with open(loc+f) as infile:
                 for line in infile:
+
+                    ## load 2000 tweets at a time 
                     tweet = json.loads(line)
                     tweet_ids.append(tweet['id'])
                     tweet_text.append(tweet['text'])
@@ -75,21 +68,31 @@ def run():
                     t2 = 0
                     if counter%size == 0:
                         t1 = time.clock()
+
+                        ## X contains te tf-idf score of the tweets in the "sparse row matrix" format
                         if initial:
                             X = vectorizer.fit_transform(tweet_text)
                         else:
                             X = vectorizer.transform(tweet_text)
                         print X.get_shape()
                         print len(vectorizer.vocabulary_)
+
+                        ## if the total number of keywords exceed the pre-specified dimension, raise error
                         if X.get_shape()[0] > dimension:
                             print X.get_shape()
-                            print "err"
+                            print "dimension exceeded"
                             raise
                         for i in range(X.get_shape()[0]):
+
                             temp_tweet = X.getrow(i)
+
+                            ## query for the nearest neighbor from the lshash tables
                             nn = lsh.arpoxNN(temp_tweet, L=comparisons)
                             c = 2
                             scase = False
+
+                            ## if nearesr neighbor is not null and the cosine similarity is less than the threshold, add the tweet to the respective cluster
+
                             if nn is not None:
                                 ((a, b),c) = nn
                                 if c <= cos_threshold:
@@ -97,8 +100,12 @@ def run():
                                     clusters.setdefault(inv_index[b],[]).append(tweet_ids[i])
                                 #else:
                                 #    scase = True
+
+                            ## else, linearly search through the previous 2000 + i tweets to find the nearest neighbor
+                            """ code to linearly search through the tweets"""
                             if (c > cos_threshold or nn is None or scase):
                                 searchY = False
+
                                 if (i==0 and not initial):
                                     searchY = True
                                 if (i==0 and initial):
@@ -147,6 +154,8 @@ def run():
                                         inv_index[tweet_ids[i]] = num_clusters
                                         clusters.setdefault(num_clusters, []).append(tweet_ids[i])
                                         num_clusters = num_clusters + 1
+
+                            ### index the tweet into the hsh tables
                             lsh.index(input_point = temp_tweet, extra_data = tweet_ids[i])
                         initial = False
                         Y = X

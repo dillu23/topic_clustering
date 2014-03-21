@@ -298,41 +298,29 @@ class LSHash(object):
         else:
             raise ValueError("The distance function name is invalid.")
         
+
+        ## query in each hash table
         for i, table in enumerate(self.hash_tables):
             binary_hash = self._hash(self.uniform_planes[i], query_point)
+
+            ## count the number of occurences in each hash table for every tweet in the candidate set
             for x in table.get_list(binary_hash):
                 candidate_set[x] = candidate_set.setdefault(x, 0) + 1
         y = candidate_set.keys()
 
+        ## sort the candidate set by the number of occurences of the tweets in the hash-tables
+        ## and keep the top L tweets. This step is done to limit the number of comparisons
         y.sort(key = lambda x: -candidate_set[x])
         y = y[:L]
+        
         #candidates = [(ix, d_func(query_point, ix[0]))
         #              for ix in candidates]
         if (len(y)==0):
             return None
+
+        ## linearly search through the candidate set to find the nearest neighbor, cosine_similarity is evaluated
         ind = min(y, key = lambda x: d_func(query_point, x[0][0]))
-        #y.sort(key = lambda x: d_func(query_point, x[0][0]))
         return (ind , d_func(query_point, ind[0][0]))
-
-    def arpoxNN_2(self, query_point, L = 1000):
-        candidate_set = dict()
-        d_func = LSHash.cosine_dist
-        for i, table in enumerate(self.hash_tables):
-            binary_hash = self._hash(self.uniform_planes[i], query_point[0])
-            for x in table.get_list(binary_hash):
-                candidate_set[x] = candidate_set.setdefault(x, 0) + 1
-        y = candidate_set.keys()
-
-        y.sort(key = lambda x: -candidate_set[x])
-        y = y[:L]
-        #candidates = [(ix, d_func(query_point, ix[0]))
-        #              for ix in candidates]
-        if (len(y)==0):
-            return None
-        #print y[0][1][0]
-        ind = min(y, key = lambda x: (d_func(query_point[0], x[0][0]) + d_func(query_point[1], x[1][0]))/2)
-        #y.sort(key = lambda x: d_func(query_point, x[0][0]))
-        return (ind , (d_func(query_point[0], ind[0][0]) + d_func(query_point[1], ind[1][0]))/2)
 
     ### distance functions
 
@@ -371,15 +359,31 @@ class LSHash(object):
         x1 = x.dot(x.transpose()).data
         y1 = y.dot(y.transpose()).data
         return 1 - float(xy[0]) / ((x1[0] * y1[0]) ** 0.5)
-	"""
-	xy = x.multiply(y).sum()
-	if xy ==0:
-		return 1
-	x1 = x.multiply(x).sum()
-	y1 = y.multiply(y).sum()
-	return 1 - float(xy)/((x1 + y1)**.5)
-    	"""
+	    """
+    	xy = x.multiply(y).sum()
+    	if xy ==0:
+    		return 1
+    	x1 = x.multiply(x).sum()
+    	y1 = y.multiply(y).sum()
+    	return 1 - float(xy)/((x1 + y1)**.5)
+        """
+        """
+        xy = dotproduct(x,y)
+        if xy =0:
+            return 1
+        x1 = dotproduct(x,x)
+        y1 = dotproduct(y,y)
+        return 1 - float(xy)/((x1 + y1)**.5)
+        """
+
     @staticmethod
     def dotproduct(x,y):
+        p = 0
+        a = set(x.indices).intersection(set(y.indices))
+        for i in a:
+            p += x.data[np.where(x.indices == i)[0][0]]*y.data[np.where(y.indices == i)[0][0]]*1.0
+        return p
+        """
         x = csr_matrix(x)
         return x.dot(y);
+        """
