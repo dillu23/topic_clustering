@@ -7,28 +7,7 @@ import numpy as np
 import scipy.sparse as sp
 import cProfile
 import time
-def dotproduct(x,y):
-    p = 0
-    a = set(x.indices).intersection(set(y.indices))
-    for i in a:
-        p += x.data[np.where(x.indices == i)[0][0]]*y.data[np.where(y.indices == i)[0][0]]*1.0
-    return p
-        
-def cosine_dist(x,y):
-    return 1 - float(dotproduct(x,y))/((dotproduct(x,x) + dotproduct(y,y))**.5
 
-
-#indir ='logs/'
-#newdir = 'logs/processed/'
-#processed_file = 'processedTweets.txt'
-#for root, dirs, filenames in os.walk(indir):
-#    for f in filenames:
-#        if (f != '.DS_Store'):
-#            try:
-#                processfile(indir + f, processed_file)
-#                #os.rename(indir +f,newdir +f)
-#            except:
-#                print f
 def run():
     initial = True
     size = 2000
@@ -63,7 +42,7 @@ def run():
                     ## load 2000 tweets at a time 
                     tweet = json.loads(line)
                     tweet_ids.append(tweet['id'])
-                    tweet_text.append(tweet['text'])
+                    tweet_text.append(twvv sxxxeet['text'])
                     counter = counter + 1
                     t2 = 0
                     if counter%size == 0:
