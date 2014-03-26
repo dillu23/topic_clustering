@@ -353,13 +353,18 @@ class LSHash(object):
 
     @staticmethod
     def cosine_dist(x, y):
+<<<<<<< HEAD
 	"""
+=======
+        """
+>>>>>>> upstream/master
         xy = x.dot(y.transpose()).data
         if len(xy) ==0:
             return 1
         x1 = x.dot(x.transpose()).data
         y1 = y.dot(y.transpose()).data
         return 1 - float(xy[0]) / ((x1[0] * y1[0]) ** 0.5)
+        """
         """
     	xy = x.multiply(y).sum()
     	if xy ==0:
@@ -375,7 +380,7 @@ class LSHash(object):
         x1 = func(x,x)
         y1 = func(y,y)
         return 1 - float(xy)/((x1 + y1)**.5)
-        """
+        
 
     @staticmethod
     def dotproduct(x,y):
