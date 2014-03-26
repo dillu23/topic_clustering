@@ -353,11 +353,7 @@ class LSHash(object):
 
     @staticmethod
     def cosine_dist(x, y):
-<<<<<<< HEAD
-	"""
-=======
         """
->>>>>>> upstream/master
         xy = x.dot(y.transpose()).data
         if len(xy) ==0:
             return 1
