@@ -42,7 +42,7 @@ def run():
                     ## load 2000 tweets at a time 
                     tweet = json.loads(line)
                     tweet_ids.append(tweet['id'])
-                    tweet_text.append(twvv sxxxeet['text'])
+                    tweet_text.append(tweet['text'])
                     counter = counter + 1
                     t2 = 0
                     if counter%size == 0:
