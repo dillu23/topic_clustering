@@ -96,20 +96,20 @@ def run():
                         tweet_text = []
                         print counter
                         print time.clock() - t1
-                f2 = open('time.txt','a')
-                f2.write(str(time.clock()-t1) + '\n')
-                f2.close()
-                if counter%1000000==0:
-                    f2 = open('result.txt', 'a')
-                    f2.write(json.dumps(clusters) + "\n")
-                    f3 = open('vocab.txt', 'a')
-                    f4 = open('vectorizer.txt', 'a')
-                    f3.write(json.dumps(vectorizer.vocabulary_) + "\n")
-                    f4.write(json.dumps(vectorizer.idf_) + "\n")
-                    #print clusters
-                    #print vectorizer.vocabulary_
-                    f2.close()
-                    f3.close()
-                    f4.close()
+                        f2 = open('time.txt','a')
+                        f2.write(str(time.clock()-t1) + '\n')
+                        f2.close()
+                        if counter%1000000==0:
+                            f2 = open('result.txt', 'a')
+                            f2.write(json.dumps(clusters) + "\n")
+                            f3 = open('vocab.txt', 'a')
+                            f4 = open('vectorizer.txt', 'a')
+                            f3.write(json.dumps(vectorizer.vocabulary_) + "\n")
+                            f4.write(json.dumps(vectorizer.idf_) + "\n")
+                            #print clusters
+                            #print vectorizer.vocabulary_
+                            f2.close()
+                            f3.close()
+                            f4.close()
 #run()
 cProfile.run('run()')
