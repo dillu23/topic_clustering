@@ -62,7 +62,6 @@ def run():
                             print "dimension exceeded"
                             raise
                         for i in range(X.get_shape()[0]):
-
                             temp_tweet = X.getrow(i)
 
                             ## query for the nearest neighbor from the lshash tables
