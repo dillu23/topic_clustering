@@ -23,7 +23,7 @@ for root, dirs, filename in os.walk(loc):
 					#b2.insert(str(tweet_id), {'cf': {'text': b}})
 					f2.write(json.dumps(c) + '\n')
 					"""
-					if (tweet_id %10000 == 0):
+					if (tweet_id %3000 == 0):
 						print "batch written"
 						b2.commit(finalize = True)
 					"""
