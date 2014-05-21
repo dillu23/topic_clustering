@@ -1,6 +1,10 @@
-"""
+
 import os
 import json
+from starbase import Connection
+
+c = Connection(host = '127.0.0.1', port = 8080)
+t = c.table('tweets_test')
 tweet_id = 1
 loc = 'tweets/'
 loc2 = 'processed_tweets/'
@@ -12,10 +16,12 @@ for root, dirs, filename in os.walk(loc):
 				b = line[line.index('\t')+1:]
 				c = {}
 				c['id'] = tweet_id
-				tweet_id = tweet_id + 1
 				c['text'] = b
+				t.insert(str(tweet_id), {'cf': {'text': b}})
 				f2.write(json.dumps(c) + '\n')
+				tweet_id = tweet_id + 1
 		f2.close()
+
 
 """
 import os
@@ -40,5 +46,5 @@ f.write(json.dumps(lower))
 f.write('\n')
 f.write(json.dumps(upper))
 f.close()
-
+"""
 
