@@ -12,16 +12,16 @@ for root, dirs, filename in os.walk(loc):
 	for fname in filename:
 		f2 = open(loc2 + fname, 'w')
 		with open(loc + fname) as infile:
-			b = t.batch()
+			b2 = t.batch()
 			for line in infile:
 				b = line[line.index('\t')+1:]
 				c = {}
 				c['id'] = tweet_id
 				c['text'] = b
-				b.insert(str(tweet_id), {'cf': {'text': b}})
+				b2.insert(str(tweet_id), {'cf': {'text': b}})
 				f2.write(json.dumps(c) + '\n')
 				tweet_id = tweet_id + 1
-			b.commit(finalize = True)
+			b2.commit(finalize = True)
 		f2.close()
 
 
