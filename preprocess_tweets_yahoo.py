@@ -15,16 +15,18 @@ for root, dirs, filename in os.walk(loc):
 		with open(loc + fname) as infile:
 			
 			for line in infile:
-				b = line[line.index('\t')+1:]
-				c = {}
-				c['id'] = tweet_id
-				c['text'] = b
-				b2.insert(str(tweet_id), {'cf': {'text': b}})
-				f2.write(json.dumps(c) + '\n')
+				if tweet_id%3 == 0:
+					b = line[line.index('\t')+1:]
+					c = {}
+					c['id'] = tweet_id
+					c['text'] = b
+					b2.insert(str(tweet_id), {'cf': {'text': b}})
+					f2.write(json.dumps(c) + '\n')
+					
+					if (tweet_id %10000 == 0):
+						print "batch written"
+						b2.commit(finalize = True)
 				tweet_id = tweet_id + 1
-				if (tweet_id %100000 == 0):
-					print "batch written"
-					b2.commit(finalize = True)
 			
 		f2.close()
 
