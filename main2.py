@@ -99,11 +99,11 @@ def run():
                         f2 = open('time.txt','a')
                         f2.write(str(time.clock()-t1) + '\n')
                         f2.close()
-                        if counter%1000000==0:
-                            f2 = open('result.txt', 'a')
+                        if counter%20000==0:
+                            f2 = open('result.txt', 'w')
                             f2.write(json.dumps(clusters) + "\n")
-                            f3 = open('vocab.txt', 'a')
-                            f4 = open('vectorizer.txt', 'a')
+                            f3 = open('vocab.txt', 'w')
+                            f4 = open('vectorizer.txt', 'w')
                             f3.write(json.dumps(vectorizer.vocabulary_) + "\n")
                             f4.write(json.dumps(vectorizer.idf_) + "\n")
                             #print clusters
