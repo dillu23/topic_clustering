@@ -5,6 +5,7 @@ from starbase import Connection
 
 c = Connection(host = '127.0.0.1', port = 8080)
 t = c.table('tweets_test')
+b2 = t.batch()
 tweet_id = 1
 loc = 'tweets/'
 loc2 = 'processed_tweets/'
@@ -12,7 +13,7 @@ for root, dirs, filename in os.walk(loc):
 	for fname in filename:
 		f2 = open(loc2 + fname, 'w')
 		with open(loc + fname) as infile:
-			b2 = t.batch()
+			
 			for line in infile:
 				b = line[line.index('\t')+1:]
 				c = {}
@@ -21,7 +22,10 @@ for root, dirs, filename in os.walk(loc):
 				b2.insert(str(tweet_id), {'cf': {'text': b}})
 				f2.write(json.dumps(c) + '\n')
 				tweet_id = tweet_id + 1
-			b2.commit(finalize = True)
+				if (tweet_id %1000 == 0):
+					print "batch written"
+					b2.commit(finalize = True)
+			
 		f2.close()
 
 
