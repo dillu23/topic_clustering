@@ -2,7 +2,7 @@
 import os
 import json
 from starbase import Connection
-
+"""
 #c = Connection(host = '127.0.0.1', port = 8080)
 #t = c.table('tweets_test')
 #b2 = t.batch()
@@ -22,11 +22,11 @@ for root, dirs, filename in os.walk(loc):
 					c['text'] = b
 					#b2.insert(str(tweet_id), {'cf': {'text': b}})
 					f2.write(json.dumps(c) + '\n')
-					"""
+					
 					if (tweet_id %3000 == 0):
 						print "batch written"
 						b2.commit(finalize = True)
-					"""
+					
 				tweet_id = tweet_id + 1
 			
 		f2.close()
@@ -55,5 +55,4 @@ f.write(json.dumps(lower))
 f.write('\n')
 f.write(json.dumps(upper))
 f.close()
-"""
 

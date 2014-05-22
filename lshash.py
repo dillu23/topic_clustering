@@ -135,8 +135,8 @@ class LSHash(object):
             #input_point = np.array(input_point)  # for faster dot product
             #projections = np.dot(planes, input_point)
             #input_point = csr_matrix(input_point)
-            #projections = [input_point.dot(plane)[0] for plane in planes]
-            projections = [LSHash.hash_dotproduct(input_point, plane) for plane in planes]
+            projections = [input_point.dot(plane)[0] for plane in planes]
+            #projections = [LSHash.hash_dotproduct(input_point, plane) for plane in planes]
             #print projections
             
         except TypeError as e:
