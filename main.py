@@ -145,7 +145,7 @@ def run():
                         f2 = open('time.txt','a')
                         f2.write(str(time.clock()-t1) + '\n')
                         f2.close()
-                        if counter%100000==0:
+                        if counter%10000==0:
                             f2 = open('result.txt', 'a')
                             f2.write(json.dumps(clusters) + "\n")
                             f3 = open('vocab.txt', 'a')
