@@ -12,12 +12,22 @@ import time
 def write_clusters(i, cl, clusters, tweets_dump, fn):
     f = open('clusters/' + str(fn) + '/' + str(i) + '.txt', 'w')
     f2 = open('clusters/current/' + str(i) + '.txt', 'w')
+    arr = []
     for x in clusters[cl[i]]:
         f.write(json.dumps(tweets_dump[x]) + '\n')
         f2.write(json.dumps(tweets_dump[x]) + '\n')
+        arr.append(x)
     f.close()
     f2.close()
-
+    f = open('clusters/list.txt', 'a')
+    f.write(str(fn) + '\n')
+    f.close()
+    f = open('clusters/' + str(fn) + '/list.txt', 'w')
+    f2 = open('clusters/current/list.txt', 'w')
+    f.write(json.dumps(arr))
+    f2.write(json.dumps(arr))
+    f.close()
+    f2.close()
 
 def run():
     initial = True
