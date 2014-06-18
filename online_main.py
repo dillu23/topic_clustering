@@ -25,11 +25,11 @@ def run():
     tweet_ids = []
     tweet_text = []
     counter = 0
-    num_hashtables = 5      ## recompute the random vectors if this is changed
+    num_hashtables = 4      ## recompute the random vectors if this is changed
     dimension = 500000      ## recompute the random vectors if this is changed
     hash_size = 13          ## length of the LSHash of the tweets
     bucket_size = 100       ## size of the queue for each hash in the hash tables
-    comparisons = 200       ## upper bound on the number of comparisons (dot product) to find the nearest neighbor
+    comparisons = 50       ## upper bound on the number of comparisons (dot product) to find the nearest neighbor
     cos_threshold = .7      ## threshold for the similarity of two tweets
 
     ## initialize the tf-idf vectorizer
@@ -56,13 +56,14 @@ def run():
         files = files - completed
         if len(files) == 0:
             print 'sleeping'
-            time.sleep(10)
+            time.sleep(3000)
             print 'checking'
             continue
-        print files
+        #print files
         tweets_dump = {}
         for fn in files:
             print fn
+            time_tmp2 = time.time()
             with open('/tmp/tweets_tmp/' + fn) as infile:
                 for line in infile:
                     ## load 2000 tweets at a time 
@@ -82,8 +83,8 @@ def run():
                             X = vectorizer.fit_transform(tweet_text)
                         else:
                             X = vectorizer.transform(tweet_text)
-                        print X.get_shape()
-                        print len(vectorizer.vocabulary_)
+                        #print X.get_shape()
+                        #print len(vectorizer.vocabulary_)
 
                         ## if the total number of keywords exceed the pre-specified dimension, raise error
                         if X.get_shape()[0] > dimension:
@@ -123,8 +124,8 @@ def run():
                         Y1 = tweet_ids[:]
                         tweet_ids = []
                         tweet_text = []
-                        print counter
-                        print time.clock() - t1
+                        #print counter
+                        #print time.clock() - t1
                         f2 = open('time.txt','a')
                         f2.write(str(time.clock()-t1) + '\n')
                         f2.close()
@@ -143,6 +144,8 @@ def run():
                             f4.close()
                         """
             print 'done'
+            print counter
+            print str(time.time() - time_tmp2)
             f = open('/tmp/completed_tmp.txt', 'a')
             f.write(fn + '\n')
             f.close()
