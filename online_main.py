@@ -9,25 +9,12 @@ import cProfile
 import time
 
 
-def write_clusters(i, cl, clusters, tweets_dump, fn):
-    f = open('clusters/' + str(fn) + '/' + str(i) + '.txt', 'w')
-    f2 = open('clusters/current/' + str(i) + '.txt', 'w')
-    arr = []
+def write_clusters(i, cl, clusters, tweets_dump, fn, loc):
+    f = open(loc + '/' + str(fn) + '/' + str(i) + '.txt', 'w')
+    f2 = open(loc +'/current/' + str(i) + '.txt', 'w')
     for x in clusters[cl[i]]:
         f.write(json.dumps(tweets_dump[x]) + '\n')
         f2.write(json.dumps(tweets_dump[x]) + '\n')
-        arr.append(x)
-    f.close()
-    f2.close()
-    f = open('clusters/list.txt', 'a')
-    f.write(str(fn) + '\n')
-    f.close()
-    f = open('clusters/' + str(fn) + '/list.txt', 'w')
-    f2 = open('clusters/current/list.txt', 'w')
-    f.write(json.dumps(arr))
-    f2.write(json.dumps(arr))
-    f.close()
-    f2.close()
 
 def run():
     initial = True
@@ -56,6 +43,7 @@ def run():
     completed = set([x.replace('\n', '') for x in completed])
 
     while(True):
+        clusters_size_prev = {}
         files = []
         for root, dirs, filenames in os.walk('/tmp/tweets_tmp/'):
             for fname in filenames:
@@ -168,6 +156,7 @@ def run():
             os.makedirs('clusters/current')
         
         clusters_size = {}
+
         for x in clusters:
             clusters_size[x] = len(clusters[x])
         f = open('clusters/' + str(time_temp) + '/sizes.txt', 'w')
@@ -182,9 +171,49 @@ def run():
         for x in cls:
             if clusters_size[x] >=10:
                 cl.append(x)
+        arr = []
         for i in range(len(cl)):
-            write_clusters(i, cl, clusters, tweets_dump, time_temp)
+            write_clusters(i, cl, clusters, tweets_dump, time_temp, 'clusters')
+            arr.append(cl[i])
+        f = open('clusters/' + str(time_temp) + '/list.txt', 'w')
+        f.write(json.dumps(arr))
+        f.close()
+        f = open('clusters/current/list.txt', 'w')
+        f.write(json.dumps(arr))
+        f.close()
+        f = open('clusters/list.txt', 'a')
+        f.write(str(time_temp) + '\n')
+        f.close()
 
+        if not os.path.exists('ratio_clusters/' + str(time_temp)):
+            os.makedirs('ratio_clusters/' + str(time_temp))
+        if not os.path.exists('ratio_clusters/current'):
+            os.makedirs('ratio_clusters/current')
+
+        ratio = {}
+        for x in clusters_size:
+            r = 1
+            if (x in clusters_size_prev and clusters_size_prev[x] != 0):
+                    r = clusters_size_prev[x]
+            ratio[x] = cluster_size[x]/r
+        ratio_keys = ratio.keys()
+        ratio_keys.sort(key = lambda x : -1 * ratio[x])
+        ratio_keys = ratio_keys[:300]
+        arr = []
+        for i in range(len(ratio_keys)):
+            write_clusters(i, ratio_keys, clusters, tweets_dump, time_temp, 'ratio_clusters')
+            arr.append(ratio_keys[i])
+        f = open('ratio_clusters/' + str(time_temp) + '/list.txt', 'w')
+        f.write(json.dumps(arr))
+        f.close()
+        f = open('ratio_clusters/current/list.txt', 'w')
+        f.write(json.dumps(arr))
+        f.close()
+        f = open('ratio_clusters/list.txt', 'a')
+        f.write(str(time_temp) + '\n')
+        f.close()
+
+        clusters_size_prev = clusters_size
         clusters = {}
         
         
