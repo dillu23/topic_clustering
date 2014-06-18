@@ -150,19 +150,19 @@ def run():
             completed.add(fn)
         print "all done"
         time_temp = time.time()
-        if not os.path.exists('clusters/' + str(time_temp)):
-            os.makedirs('clusters/' + str(time_temp))
-        if not os.path.exists('clusters/current'):
-            os.makedirs('clusters/current')
+        if not os.path.exists('/home/y/share/htdocs/clusters/' + str(time_temp)):
+            os.makedirs('/home/y/share/htdocs/clusters/' + str(time_temp))
+        if not os.path.exists('/home/y/share/htdocs/clusters/current'):
+            os.makedirs('/home/y/share/htdocs/clusters/current')
         
         clusters_size = {}
 
         for x in clusters:
             clusters_size[x] = len(clusters[x])
-        f = open('clusters/' + str(time_temp) + '/sizes.txt', 'w')
+        f = open('/home/y/share/htdocs/clusters/' + str(time_temp) + '/sizes.txt', 'w')
         f.write(json.dumps(clusters_size))
         f.close()
-        f = open('clusters/current/sizes.txt', 'w')
+        f = open('/home/y/share/htdocs/clusters/current/sizes.txt', 'w')
         f.write(json.dumps(clusters_size))
         f.close()
         cls = clusters_size.keys()
@@ -173,43 +173,44 @@ def run():
                 cl.append(x)
         arr = []
         for i in range(len(cl)):
-            write_clusters(i, cl, clusters, tweets_dump, time_temp, 'clusters')
+            write_clusters(i, cl, clusters, tweets_dump, time_temp, '/home/y/share/htdocs/clusters')
             arr.append(cl[i])
-        f = open('clusters/' + str(time_temp) + '/list.txt', 'w')
+        f = open('/home/y/share/htdocs/clusters/' + str(time_temp) + '/list.txt', 'w')
         f.write(json.dumps(arr))
         f.close()
-        f = open('clusters/current/list.txt', 'w')
+        f = open('/home/y/share/htdocs/clusters/current/list.txt', 'w')
         f.write(json.dumps(arr))
         f.close()
-        f = open('clusters/list.txt', 'a')
+        f = open('/home/y/share/htdocs/clusters/list.txt', 'a')
         f.write(str(time_temp) + '\n')
         f.close()
 
-        if not os.path.exists('ratio_clusters/' + str(time_temp)):
-            os.makedirs('ratio_clusters/' + str(time_temp))
-        if not os.path.exists('ratio_clusters/current'):
-            os.makedirs('ratio_clusters/current')
+        if not os.path.exists('/home/y/share/htdocs/ratio_clusters/' + str(time_temp)):
+            os.makedirs('/home/y/share/htdocs/ratio_clusters/' + str(time_temp))
+        if not os.path.exists('/home/y/share/htdocs/ratio_clusters/current'):
+            os.makedirs('/home/y/share/htdocs/ratio_clusters/current')
 
         ratio = {}
         for x in clusters_size:
-            r = 1
-            if (x in clusters_size_prev and clusters_size_prev[x] != 0):
-                    r = clusters_size_prev[x]
-            ratio[x] = clusters_size[x]/r
+            if clusters_size[x]>=10:
+                r = 1
+                if (x in clusters_size_prev and clusters_size_prev[x] != 0):
+                        r = clusters_size_prev[x]
+                ratio[x] = clusters_size[x]*1.0/r
         ratio_keys = ratio.keys()
         ratio_keys.sort(key = lambda x : -1 * ratio[x])
         ratio_keys = ratio_keys[:300]
         arr = []
         for i in range(len(ratio_keys)):
-            write_clusters(i, ratio_keys, clusters, tweets_dump, time_temp, 'ratio_clusters')
+            write_clusters(i, ratio_keys, clusters, tweets_dump, time_temp, '/home/y/share/htdocs/ratio_clusters')
             arr.append(ratio_keys[i])
-        f = open('ratio_clusters/' + str(time_temp) + '/list.txt', 'w')
+        f = open('/home/y/share/htdocs/ratio_clusters/' + str(time_temp) + '/list.txt', 'w')
         f.write(json.dumps(arr))
         f.close()
-        f = open('ratio_clusters/current/list.txt', 'w')
+        f = open('/home/y/share/htdocs/ratio_clusters/current/list.txt', 'w')
         f.write(json.dumps(arr))
         f.close()
-        f = open('ratio_clusters/list.txt', 'a')
+        f = open('/home/y/share/htdocs/ratio_clusters/list.txt', 'a')
         f.write(str(time_temp) + '\n')
         f.close()
 
