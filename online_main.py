@@ -60,6 +60,8 @@ def run():
             continue
         #print files
         tweets_dump = {}
+        tweet_ids = []
+        tweet_text = []
         for fn in files:
             print fn
             time_tmp2 = time.time()
@@ -174,9 +176,8 @@ def run():
             write_clusters(i, cl, clusters, tweets_dump, time_temp)
 
         clusters = {}
-        tweet_ids = []
-        tweet_text = []
-        tweets_dump = []
+        
+        
 
 run()
 #cProfile.run('run()')
