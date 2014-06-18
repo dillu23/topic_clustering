@@ -13,8 +13,8 @@ def write_clusters(i, cl, clusters, tweets_dump, fn):
     f = open('clusters/' + str(fn) + '/' + str(i) + '.txt', 'w')
     f2 = open('clusters/current/' + str(i) + '.txt', 'w')
     for x in clusters[cl[i]]:
-        f.write(json.dumps(tweets_dump[x]['text']) + '\n')
-        f2.write(json.dumps(tweets_dump[x]['text']) + '\n')
+        f.write(json.dumps(tweets_dump[x]) + '\n')
+        f2.write(json.dumps(tweets_dump[x]) + '\n')
     f.close()
     f2.close()
 
@@ -39,8 +39,7 @@ def run():
 
     clusters = {}           ## maintain the clusters
     num_clusters = 0
-    Y = None
-    Y1 = None
+
 
     completed = open('/tmp/completed_tmp.txt')
     completed = completed.readlines()
@@ -71,7 +70,7 @@ def run():
                     tweet = json.loads(line)
                     tweet_ids.append(tweet['id'])
                     tweet_text.append(tweet['filtered_text'])
-                    tweets_dump[str(tweet['id'])] = tweet
+                    tweets_dump[str(tweet['id'])] = tweet['text']
 
                     counter = counter + 1
                     t2 = 0
@@ -120,8 +119,7 @@ def run():
                             ### index the tweet into the hsh tables
                             lsh.index(input_point = temp_tweet, extra_data = tuple([tweet_ids[i], cluster_id]))
                         initial = False
-                        Y = X
-                        Y1 = tweet_ids[:]
+ 
                         tweet_ids = []
                         tweet_text = []
                         #print counter
@@ -176,6 +174,9 @@ def run():
             write_clusters(i, cl, clusters, tweets_dump, time_temp)
 
         clusters = {}
+        tweet_ids = []
+        tweet_text = []
+        tweets_dump = []
 
 run()
 #cProfile.run('run()')
