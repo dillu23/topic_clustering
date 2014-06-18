@@ -4,3 +4,6 @@
 .DS_Store
 dump/*
 offline.zip
+clusters/
+ratio_clusters/
+off.zip

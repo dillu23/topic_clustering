@@ -23,7 +23,7 @@ def run():
     tweet_text = []
     counter = 0
     num_hashtables = 4      ## recompute the random vectors if this is changed
-    dimension = 500000      ## recompute the random vectors if this is changed
+    dimension = 5000000      ## recompute the random vectors if this is changed
     hash_size = 13          ## length of the LSHash of the tweets
     bucket_size = 100       ## size of the queue for each hash in the hash tables
     comparisons = 50       ## upper bound on the number of comparisons (dot product) to find the nearest neighbor
@@ -195,7 +195,7 @@ def run():
             r = 1
             if (x in clusters_size_prev and clusters_size_prev[x] != 0):
                     r = clusters_size_prev[x]
-            ratio[x] = cluster_size[x]/r
+            ratio[x] = clusters_size[x]/r
         ratio_keys = ratio.keys()
         ratio_keys.sort(key = lambda x : -1 * ratio[x])
         ratio_keys = ratio_keys[:300]
