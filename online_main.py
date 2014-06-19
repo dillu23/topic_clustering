@@ -60,6 +60,7 @@ def run():
         tweets_dump = {}
         tweet_ids = []
         tweet_text = []
+        time_sleep = time.time()
         for fn in files:
             print fn
             time_tmp2 = time.time()
@@ -217,8 +218,9 @@ def run():
         clusters_size_prev = {}
         for x in clusters_size:
             clusters_size_prev[x] = clusters_size[x]
-        
+
         clusters = {}
+        time.sleep(max(0, 3600 - (time.time() - time_sleep)))
         
         
 
