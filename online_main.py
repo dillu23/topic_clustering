@@ -214,7 +214,10 @@ def run():
         f.write(str(time_temp) + '\n')
         f.close()
 
-        clusters_size_prev = clusters_size
+        clusters_size_prev = {}
+        for x in clusters_size:
+            clusters_size_prev[x] = clusters_size[x]
+        
         clusters = {}
         
         
