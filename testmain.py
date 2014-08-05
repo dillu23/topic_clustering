@@ -10,12 +10,13 @@ import time
 
 def run():
     initial = True
-    size = 2000
+    error_string = ""
+    size = 200000
     tweet_ids = []
     tweet_text = []
     counter = 0
     num_hashtables = 13      ## recompute the random vectors if this is changed
-    dimension = 50000       ## recompute the random vectors if this is changed
+    dimension = 500000       ## recompute the random vectors if this is changed
     hash_size = 13          ## length of the LSHash of the tweets
     bucket_size = 100       ## size of the queue for each hash in the hash tables
     comparisons = 50       ## upper bound on the number of comparisons (dot product) to find the nearest neighbor
@@ -33,21 +34,23 @@ def run():
     Y = None
     Y1 = None
     f_d = open("output.txt",'w')
-    loc = "/Users/dilpreet/Documents/mtp_documents/markedData/data/"
+    loc = "tweets/"
     for root, dirs, filenames in os.walk(loc):
         for f in filenames:
             with open(loc+f) as infile:
                 for line in infile:
 
                     ## load 2000 tweets at a time 
+                    #print f
                     tweet = json.loads(line)
                     tweet_ids.append(tweet['id'])
                     tweet_text.append(tweet['text'])
                     counter = counter + 1
                     t2 = 0
+                    if counter%10000==0:
+                        print counter
                     if counter%size == 0:
                         t1 = time.clock()
-
                         ## X contains te tf-idf score of the tweets in the "sparse row matrix" format
                         if initial:
                             X = vectorizer.fit_transform(tweet_text)
@@ -63,9 +66,12 @@ def run():
                             raise
                         for i in range(X.get_shape()[0]):
                             temp_tweet = X.getrow(i)
-
+                            if i%200 == 0:
+                                print str(time.clock() - t1)
+                                t1 = time.clock()
                             ## query for the nearest neighbor from the lshash tables
-                            nn = lsh.arpoxNN(temp_tweet, L=comparisons)
+                            #nn = lsh.arpoxNN(temp_tweet, L=comparisons)
+                            nn = None
                             c = 2
                             scase = False
 
@@ -76,6 +82,7 @@ def run():
                                 if c <= cos_threshold:
                                     inv_index[tweet_ids[i]] = inv_index[b]
                                     clusters.setdefault(inv_index[b],[]).append(tweet_ids[i])
+                                    error_string = error_string + "0"
                                 #else:
                                 #    scase = True
 
@@ -89,6 +96,7 @@ def run():
                                 if (i==0 and initial):
                                     inv_index[tweet_ids[i]] = num_clusters
                                     clusters.setdefault(num_clusters, []).append(tweet_ids[i])
+                                    error_string = error_string + "1"
                                     num_clusters = num_clusters + 1
                                 if (i!=0):
                                     Z = X[:i]
@@ -112,9 +120,11 @@ def run():
                                             inv_index[tweet_ids[i]] = num_clusters
                                             clusters.setdefault(num_clusters, []).append(tweet_ids[i])
                                             num_clusters = num_clusters + 1
+                                            error_string = error_string + "1"
                                     else:
                                         inv_index[tweet_ids[i]] = inv_index[t3]
                                         clusters.setdefault(inv_index[t3], []).append(tweet_ids[i])
+                                        error_string = error_string + "0"
                                 if searchY == True:
                                     Z = Y[i:]
                                     t2 = temp_tweet.transpose()
@@ -128,13 +138,17 @@ def run():
                                     t3 = Y1[a + i]
                                     if (1-float(a1[a][0])/((a2[a][0] + a3[0][0])**.5))< cos_threshold:
                                         inv_index[tweet_ids[i]] = inv_index[t3]
+                                        clusters.setdefault(inv_index[tweet_ids[i]], []).append(tweet_ids[i])
+                                        error_string = error_string + "0"
+
                                     else:
                                         inv_index[tweet_ids[i]] = num_clusters
                                         clusters.setdefault(num_clusters, []).append(tweet_ids[i])
                                         num_clusters = num_clusters + 1
+                                        error_string = error_string + "1"
 
                             ### index the tweet into the hsh tables
-                            lsh.index(input_point = temp_tweet, extra_data = tweet_ids[i])
+                            #lsh.index(input_point = temp_tweet, extra_data = tweet_ids[i])
                         initial = False
                         Y = X
                         Y1 = tweet_ids[:]
@@ -172,6 +186,9 @@ def run():
     f3.close()
     f4.close()
     f5.close()
+    f2 = open('error_string.txt', 'w')
+    f2.write(error_string)
+    f2.close()
 
 run()
 #cProfile.run('run()')

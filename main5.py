@@ -15,7 +15,7 @@ def run():
     tweet_text = []
     counter = 0
     num_hashtables = 4     ## recompute the random vectors if this is changed
-    dimension = 500000      ## recompute the random vectors if this is changed
+    dimension = 50000      ## recompute the random vectors if this is changed
     hash_size = 13          ## length of the LSHash of the tweets
     bucket_size = 100       ## size of the queue for each hash in the hash tables
     comparisons = 50       ## upper bound on the number of comparisons (dot product) to find the nearest neighbor
@@ -33,14 +33,17 @@ def run():
     Y = None
     Y1 = None
     f_d = open("output.txt",'w')
-    loc = "processed_tweets/"
+    loc = "tweets/"
     for root, dirs, filenames in os.walk(loc):
+        #print filenames
         for f in filenames:
             with open(loc+f) as infile:
+                #print f
                 for line in infile:
 
                     ## load 2000 tweets at a time 
                     tweet = json.loads(line)
+                    #tweet = tweet['rtds_tweet']
                     tweet_ids.append(tweet['id'])
                     tweet_text.append(tweet['text'])
                     counter = counter + 1
@@ -53,8 +56,8 @@ def run():
                             X = vectorizer.fit_transform(tweet_text)
                         else:
                             X = vectorizer.transform(tweet_text)
-                        print X.get_shape()
-                        print len(vectorizer.vocabulary_)
+                        #print X.get_shape()
+                        #print len(vectorizer.vocabulary_)
 
                         ## if the total number of keywords exceed the pre-specified dimension, raise error
                         if X.get_shape()[0] > dimension:
@@ -97,12 +100,12 @@ def run():
                         Y1 = tweet_ids[:]
                         tweet_ids = []
                         tweet_text = []
-                        print counter
+                        #print counter
                         print time.clock() - t1
                         f2 = open('time.txt','a')
                         f2.write(str(time.clock()-t1) + '\n')
                         f2.close()
-                        if counter%20000==0:
+                        if counter%2000000==0:
                             f2 = open('result.txt', 'w')
                             f2.write(json.dumps(clusters) + "\n")
                             f3 = open('vocab.txt', 'w')
@@ -114,5 +117,19 @@ def run():
                             f2.close()
                             f3.close()
                             f4.close()
-#run()
-cProfile.run('run()')
+    f2 = open('result.txt', 'w')
+    f2.write(json.dumps(clusters) + "\n")
+    f3 = open('vocab.txt', 'w')
+    f4 = open('vectorizer.txt', 'w')
+    f3.write(json.dumps(vectorizer.vocabulary_) + "\n")
+    f4.write(json.dumps(vectorizer.idf_) + "\n")
+    #print clusters
+    #print vectorizer.vocabulary_
+    f2.close()
+    f3.close()
+    f4.close()
+run()
+
+
+
+#cProfile.run('run()')

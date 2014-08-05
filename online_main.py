@@ -18,7 +18,7 @@ def write_clusters(i, cl, clusters, tweets_dump, fn, loc):
 
 def run():
     initial = True
-    size = 2000
+    size = 200000
     tweet_ids = []
     tweet_text = []
     counter = 0
